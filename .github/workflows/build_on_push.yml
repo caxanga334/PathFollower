@@ -74,7 +74,6 @@ jobs:
       shell: bash
       run: |
         mkdir -p ${{ env.DEPENDENCIES_FOLDER }}
-        ls
         cd ${{ env.DEPENDENCIES_FOLDER }}
 
         git clone --mirror https://github.com/alliedmodders/hl2sdk hl2sdk-proxy-repo
@@ -83,9 +82,6 @@ jobs:
         do
           git clone hl2sdk-proxy-repo -b $sdk hl2sdk-$sdk
         done
-        ls
-        cd ..
-        ls
 
     - name: Fetch PathFollower
       uses: actions/checkout@v3
@@ -95,7 +91,6 @@ jobs:
     - name: Build Files
       working-directory: pathfollower
       run: |
-        ls
         mkdir post
         cd post
         python3 ../configure.py --enable-optimize --sdks=tf2 --hl2sdk-root="${{ env.DEPENDENCIES_ROOT }}" --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
@@ -108,13 +103,13 @@ jobs:
     - name: Upload Artifact for ${{ matrix.target_branch }}
       uses: actions/upload-artifact@v3
       with:
-        name: pathfollower-${{ runner.target_branch }}-${{ steps.short-sha.outputs.sha }}
+        name: pathfollower-${{ matrix.target_branch }}-${{ steps.short-sha.outputs.sha }}
         path: |
             pathfollower/post/package/*
 
     - name: Upload Debug Symbols for ${{ matrix.target_branch }}
       uses: actions/upload-artifact@v3
       with:
-        name: pathfollower-dbgsym-${{ runner.target_branch }}-${{ steps.short-sha.outputs.sha }}
+        name: pathfollower-dbgsym-${{ matrix.target_branch }}-${{ steps.short-sha.outputs.sha }}
         path: |
             pathfollower/post/**/*.${{ matrix.dbg_ext }}
