@@ -67,15 +67,12 @@ jobs:
         path: sourcemod
         submodules: recursive
 
-    - name: Fetch Source SDKs
-      shell: bash
-      run: |
-        git clone --mirror https://github.com/alliedmodders/hl2sdk hl2sdk-proxy-repo
-        sdks=(tf2)
-        for sdk in "${sdks[@]}"
-        do
-          git clone hl2sdk-proxy-repo -b $sdk hl2sdk-$sdk
-        done
+    - name: Fetch HL2SDK-TF2
+      uses: actions/checkout@v3
+      with:
+        repository: alliedmodders/hl2sdk
+        ref: tf2
+        path: hl2sdk-tf2
 
     - name: Fetch PathFollower
       uses: actions/checkout@v3
@@ -87,7 +84,7 @@ jobs:
       run: |
         mkdir post
         cd post
-        python3 ../configure.py --enable-optimize --sdks=present --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
+        python3 ../configure.py --enable-optimize --sdks=tf2 --hl2sdk-root="${{ github.workspace }}" --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
         ambuild
 
     - name: Get Short SHA
