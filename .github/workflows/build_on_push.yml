@@ -76,6 +76,7 @@ jobs:
         do
           git clone hl2sdk-proxy-repo -b $sdk hl2sdk-$sdk
         done
+        ls
 
     - name: Fetch PathFollower
       uses: actions/checkout@v3
@@ -85,6 +86,7 @@ jobs:
     - name: Build Files
       working-directory: pathfollower
       run: |
+        ls
         mkdir post
         cd post
         python3 ../configure.py --enable-optimize --sdks=tf2 --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
