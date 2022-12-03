@@ -78,7 +78,7 @@ jobs:
         cd ${{ env.DEPENDENCIES_FOLDER }}
 
         git clone --mirror https://github.com/alliedmodders/hl2sdk hl2sdk-proxy-repo
-        sdks=(tf2)
+        sdks=(tf2 sdk2013)
         for sdk in "${sdks[@]}"
         do
           git clone hl2sdk-proxy-repo -b $sdk hl2sdk-$sdk
