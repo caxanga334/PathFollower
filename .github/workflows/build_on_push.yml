@@ -67,7 +67,13 @@ jobs:
         path: sourcemod
         submodules: recursive
 
+    - name: Build HL2SDK ROOT Path
+      run: |
+        mkdir alliedmodders
+        ls
+
     - name: Fetch SDKs
+      working-directory: alliedmodders
       shell: bash
       run: |
         git clone --mirror https://github.com/alliedmodders/hl2sdk hl2sdk-proxy-repo
@@ -89,7 +95,7 @@ jobs:
         ls
         mkdir post
         cd post
-        python3 ../configure.py --enable-optimize --sdks=tf2 --hl2sdk-root="${{ github.workspace }}" --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
+        python3 ../configure.py --enable-optimize --sdks=tf2 --hl2sdk-root="${{ github.workspace }}/alliedmodders" --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
         ambuild
 
     - name: Get Short SHA
