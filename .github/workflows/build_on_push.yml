@@ -24,6 +24,9 @@ jobs:
           - target_branch: sm-1.11
             mm_branch: "1.11-dev"
             sm_branch: "1.11-dev"
+    env:
+      DEPENDENCIES_FOLDER: dependencies
+      DEPENDENCIES_ROOT: ${{ github.workspace }}/dependencies
 
     steps:
     - name: Add msbuild to PATH (Windows)
@@ -67,21 +70,21 @@ jobs:
         path: sourcemod
         submodules: recursive
 
-    - name: Build HL2SDK ROOT Path
-      run: |
-        mkdir alliedmodders
-        ls
-
-    - name: Fetch SDKs
-      working-directory: alliedmodders
+    - name: Fetch Dependencies
       shell: bash
       run: |
+        mkdir -p ${{ env.DEPENDENCIES_FOLDER }}
+        ls
+        cd ${{ env.DEPENDENCIES_FOLDER }}
+
         git clone --mirror https://github.com/alliedmodders/hl2sdk hl2sdk-proxy-repo
         sdks=(tf2)
         for sdk in "${sdks[@]}"
         do
           git clone hl2sdk-proxy-repo -b $sdk hl2sdk-$sdk
         done
+        ls
+        cd ..
         ls
 
     - name: Fetch PathFollower
@@ -95,7 +98,7 @@ jobs:
         ls
         mkdir post
         cd post
-        python3 ../configure.py --enable-optimize --sdks=tf2 --hl2sdk-root="${{ github.workspace }}/alliedmodders" --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
+        python3 ../configure.py --enable-optimize --sdks=tf2 --hl2sdk-root="${{ env.DEPENDENCIES_ROOT }}" --sm-path="${{ github.workspace }}/sourcemod" --mms-path="${{ github.workspace }}/mmsource"
         ambuild
 
     - name: Get Short SHA
