@@ -2,7 +2,7 @@
 
 on:
   push:
-    branches: [ master ]
+    branches: [ ci-create-release ]
 
 jobs:
   build_main:
@@ -113,3 +113,45 @@ jobs:
         name: pathfollower-dbgsym-${{ matrix.target_branch }}-${{ steps.short-sha.outputs.sha }}
         path: |
             pathfollower/post/**/*.${{ matrix.dbg_ext }}
+
+    # creates a release package to be uploaded, skipped if the trigger commit does not have a tag
+    - name: Build Release Package for ${{ matrix.target_branch }}
+      if: startsWith(github.ref, 'refs/tags/')
+      working-directory: pathfollower
+      shell: cmd
+      run: |
+        cd post/package
+        7z a -bb3 -mx9 -r "pathfollower-${{ matrix.target_branch }}-${{ steps.short-sha.outputs.sha }}.zip" addons
+
+    # Cache release package to be retreived by the create_release job
+    - name: Cache Release Package
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/cache@v3.0.11
+      path: |
+        pathfollower/post/package/*.zip
+      key: pathfollower-${{ github.ref_name }}
+
+
+  # Job for creating a release, waits for build_main to finish
+  create_release:
+    name: Upload Release
+    runs-on: windows-latest
+    needs: [ build_main ]
+    if: startsWith(github.ref, 'refs/tags/')
+    strategy:
+      fail-fast: false
+    env:
+      RELEASE_ROOT: ${{ github.workspace }}/pathfollower/post/package
+
+    steps:
+    - name: Retreive Release Package From Cache
+      uses: actions/cache@v3.0.11
+      path: |
+        pathfollower/post/package/*.zip
+      key: pathfollower-${{ github.ref_name }}
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v0.1.15
+      with:
+        files:  |
+          ${{ env.RELEASE_ROOT }}/*.zip
