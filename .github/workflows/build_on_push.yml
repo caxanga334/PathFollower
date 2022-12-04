@@ -167,7 +167,7 @@ jobs:
         key: pathfollower-${{ github.ref_name }}-sm-1.11
 
     - name: Debug
-      runs: |
+      run: |
         ls
         cd pathfollower/post/package/
         ls
