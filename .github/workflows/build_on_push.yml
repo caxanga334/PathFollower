@@ -148,17 +148,10 @@ jobs:
       RELEASE_ROOT: ${{ github.workspace }}/release
 
     steps:
-    - name: Build Release Directory
-      shell: bash
-      run: |
-        mkdir ${{ env.RELEASE_FOLDER }}
-        ls
-
     # Retrive the cached files from the previous jobs
     - name: Retreive Release Package From Cache
-      working-directory: ${{ env.RELEASE_FOLDER }}
       uses: actions/cache@v3.0.11
-      id: cache
+      id: cache1
       with:
         path: |
           pathfollower/post/package/*.zip
@@ -166,9 +159,8 @@ jobs:
 
     # To do: retreive both caches using a single step
     - name: Retreive Release Package From Cache
-      working-directory: ${{ env.RELEASE_FOLDER }}
       uses: actions/cache@v3.0.11
-      id: cache
+      id: cache2
       with:
         path: |
           pathfollower/post/package/*.zip
@@ -179,4 +171,4 @@ jobs:
       with:
         name: "Path Follower ${{ github.ref_name }}"
         files:  |
-          ${{ env.RELEASE_ROOT }}/*.zip
+          ${{ github.workspace }}/*.zip
