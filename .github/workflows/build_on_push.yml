@@ -2,8 +2,9 @@
 
 on:
   push:
-    branches: [ ci-create-release ]
-    tags: [ * ]
+    # run for all branches so the tag check works
+    #branches: [ ci-create-release ]
+    #tags: [ * ]
 
 jobs:
   build_main:
