@@ -166,9 +166,15 @@ jobs:
           pathfollower/post/package/*.zip
         key: pathfollower-${{ github.ref_name }}-sm-1.11
 
+    - name: Debug
+      runs: |
+        ls
+        cd pathfollower/post/package/
+        ls
+
     - name: Create Release
       uses: softprops/action-gh-release@v0.1.15
       with:
         name: "Path Follower ${{ github.ref_name }}"
         files:  |
-          ${{ github.workspace }}/*.zip
+          ${{ github.workspace }}/**/*.zip
