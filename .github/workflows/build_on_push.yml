@@ -3,6 +3,7 @@
 on:
   push:
     branches: [ ci-create-release ]
+    tags: [ * ]
 
 jobs:
   build_main:
